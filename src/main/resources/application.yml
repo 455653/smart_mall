@@ -1,0 +1,75 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smart-mall
+
+  # Boot 4 起编码过滤器配置从 server.servlet.encoding.* 迁移到 spring.servlet.encoding.*
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+  # 默认 H2 内存库：免安装，启动即用；MODE=MySQL 兼容 MySQL 语法
+  datasource:
+    url: jdbc:h2:mem:smartmall;MODE=MySQL;DATABASE_TO_LOWER=TRUE;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: ""
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-local-placeholder}   # 占位 Key，保证 Bean 能创建
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL:gpt-4o-mini}
+          temperature: 0.3
+
+# MyBatis-Plus：实体字段与表字段的下划线映射
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+# 接口文档：Boot 4 对应 springdoc 3.x，统一走 /swagger-ui.html
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:smart-mall-jwt-secret-key-must-be-at-least-32-bytes-long-2025}
+    access-ttl-seconds: 7200        # 访问令牌 2 小时
+    refresh-ttl-seconds: 604800     # 刷新令牌 7 天
+  order:
+    pay-timeout-minutes: 30         # 超时关单时间
+    free-freight-threshold: 99.00   # 满 99 包邮
+    freight: 10.00
+  ai:
+    chat-provider: mock             # mock：离线规则引擎；openai：走 Spring AI
+    embedding-provider: local       # local：哈希向量；openai：云端 Embedding
+
+---
+# MySQL 环境：--spring.profiles.active=mysql
+spring:
+  config:
+    activate:
+      on-profile: mysql
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/smart_mall?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
