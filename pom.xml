@@ -52,6 +52,18 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
+        <!-- 缓存：Boot 4 缓存自动配置已拆为独立模块，缺它则 @EnableCaching 找不到 CacheManager -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-cache</artifactId>
+        </dependency>
+
+        <!-- AOP：提供 AspectJ 注解和 Spring 切面代理支持 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aspectj</artifactId>
+        </dependency>
+
         <!-- Spring AI 流式调用依赖 Reactor；同时存在 MVC 与 WebFlux 时 Boot 判定为 SERVLET 应用 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
