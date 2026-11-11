@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+  商品 SPU 持久层。
+  namespace 必须与接口全限定名完全一致，否则启动时报
+  "Invalid bound statement (not found)"。
+-->
+<mapper namespace="com.smartmall.catalog.mapper.ProductMapper">
+
+    <!--
+      SPU 与表的列映射。status 是枚举，MyBatis 默认 EnumTypeHandler 按 name() 存取，
+      正好对上库里存的 'ON_SALE'/'OFF_SHELF'/'DRAFT'，所以不用额外写 typeHandler。
+      create_time / update_time / deleted 来自 BaseEntity，同样要在这里声明。
+    -->
+    <resultMap id="BaseResultMap" type="com.smartmall.catalog.domain.Product">
+        <id     column="id"                 property="id"/>
+        <result column="category_id"        property="categoryId"/>
+        <result column="brand_id"           property="brandId"/>
+        <result column="title"              property="title"/>
+        <result column="subtitle"           property="subtitle"/>
+        <result column="main_image"         property="mainImage"/>
+        <result column="images"             property="images"/>
+        <result column="detail"             property="detail"/>
+        <result column="ai_selling_points"  property="aiSellingPoints"/>
+        <result column="price"              property="price"/>
+        <result column="status"             property="status"/>
+        <result column="sales"              property="sales"/>
+        <result column="rating"             property="rating"/>
+        <result column="review_count"       property="reviewCount"/>
+        <result column="create_time"        property="createTime"/>
+        <result column="update_time"        property="updateTime"/>
+        <result column="deleted"            property="deleted"/>
+    </resultMap>
+
+    <!-- 全部列，供自定义 select 复用，避免 select * -->
+    <sql id="BaseColumns">
+        id, category_id, brand_id, title, subtitle, main_image, images, detail,
+        ai_selling_points, price, status, sales, rating, review_count,
+        create_time, update_time, deleted
+    </sql>
+
+    <!--
+      评价后刷新评分与评价数。
+      rating / reviewCount 是两条真实评价算出来的汇总值，只能覆盖不能累加，
+      所以这里直接 set，而不是 rating = rating + #{rating}。
+    -->
+    <update id="updateRating">
+        update pms_product
+           set rating       = #{rating},
+               review_count = #{reviewCount}
+         where id = #{id}
+    </update>
+
+</mapper>

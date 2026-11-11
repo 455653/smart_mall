@@ -77,6 +77,13 @@
             <version>${mybatis-plus.version}</version>
         </dependency>
 
+        <!-- 分页 / 防全表更新等拦截器依赖 JSqlParser 解析 SQL；MP 3.5.9 起已从 extension 拆为独立模块 -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser</artifactId>
+            <version>${mybatis-plus.version}</version>
+        </dependency>
+
         <!-- 接口文档：Spring Boot 4 需要 springdoc 3.x -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -119,6 +126,7 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

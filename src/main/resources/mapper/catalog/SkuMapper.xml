@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 商品 SKU 持久层：库存扣减的唯一入口。 -->
+<mapper namespace="com.smartmall.catalog.mapper.SkuMapper">
+
+    <resultMap id="BaseResultMap" type="com.smartmall.catalog.domain.Sku">
+        <id     column="id"          property="id"/>
+        <result column="product_id"  property="productId"/>
+        <result column="spec"        property="spec"/>
+        <result column="price"       property="price"/>
+        <result column="stock"       property="stock"/>
+        <result column="image"       property="image"/>
+        <result column="enabled"     property="enabled"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, product_id, spec, price, stock, image, enabled, create_time, update_time, deleted
+    </sql>
+
+    <!--
+      条件更新扣减库存：只有 stock >= num 才会命中行，返回 0 说明库存不足。
+
+      为什么不用「先查再改」：check-then-act 在并发下会超卖——两个线程同时读到
+      stock = 1，各自判断「够」，最后都扣，库存变 -1。这条 UPDATE 把判断和扣减
+      压进同一条语句，由 InnoDB 行锁保证原子性，是防超卖的第一道闸门。
+
+      deleted = 0 / enabled = 1 显式写出来，是因为自定义 SQL 绕过了 MyBatis-Plus
+      的逻辑删除拦截，MP 不会帮你追加这些条件。
+    -->
+    <update id="deductStock">
+        update pms_sku
+           set stock = stock - #{num}
+         where id = #{skuId}
+           and stock &gt;= #{num}
+           and deleted = 0
+           and enabled = 1
+    </update>
+
+</mapper>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 支付单持久层。 -->
+<mapper namespace="com.smartmall.pay.mapper.PaymentMapper">
+
+    <!--
+      该 Mapper 目前所有查询/写入都走 BaseMapper 内置方法（selectById / selectPage /
+      insert / updateById ...），没有自定义 SQL，所以这里只有 namespace。
+
+      之后要加自定义 SQL 就写在本文件里，接口中不再使用 @Select / @Update 注解：
+      注解里的 SQL 无法复用 <sql> 片段、无法做 <if> 动态拼接，也躲不过编译期检查。
+    -->
+
+</mapper>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 优惠券模板持久层：发券时的超发闸门。 -->
+<mapper namespace="com.smartmall.marketing.mapper.CouponTemplateMapper">
+
+    <resultMap id="BaseResultMap" type="com.smartmall.marketing.domain.CouponTemplate">
+        <id     column="id"               property="id"/>
+        <result column="name"             property="name"/>
+        <result column="type"             property="type"/>
+        <result column="threshold_amount" property="thresholdAmount"/>
+        <result column="discount_amount"  property="discountAmount"/>
+        <result column="discount_rate"    property="discountRate"/>
+        <result column="total_count"      property="totalCount"/>
+        <result column="received_count"   property="receivedCount"/>
+        <result column="per_limit"        property="perLimit"/>
+        <result column="start_time"       property="startTime"/>
+        <result column="end_time"         property="endTime"/>
+        <result column="status"           property="status"/>
+        <result column="create_time"      property="createTime"/>
+        <result column="update_time"      property="updateTime"/>
+        <result column="deleted"          property="deleted"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, name, type, threshold_amount, discount_amount, discount_rate,
+        total_count, received_count, per_limit, start_time, end_time, status,
+        create_time, update_time, deleted
+    </sql>
+
+    <!--
+      条件自增已领数量：received_count < total_count 写在 where 里，
+      发到总量后这一行不再命中，返回 0 说明已被领完。
+
+      和 SKU 扣库存同一个套路：把「够不够」的判断放进 UPDATE 的 where，
+      靠行锁串行化，避免并发领券时先查后改导致的超发。
+    -->
+    <update id="increaseReceived">
+        update mkt_coupon_template
+           set received_count = received_count + 1
+         where id = #{id}
+           and received_count &lt; total_count
+           and deleted = 0
+    </update>
+
+</mapper>

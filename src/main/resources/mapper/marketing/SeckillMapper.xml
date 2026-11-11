@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 秒杀活动持久层：名额占用的唯一入口。 -->
+<mapper namespace="com.smartmall.marketing.mapper.SeckillMapper">
+
+    <resultMap id="BaseResultMap" type="com.smartmall.marketing.domain.Seckill">
+        <id     column="id"            property="id"/>
+        <result column="product_id"    property="productId"/>
+        <result column="sku_id"        property="skuId"/>
+        <result column="seckill_price" property="seckillPrice"/>
+        <result column="stock"         property="stock"/>
+        <result column="sold"          property="sold"/>
+        <result column="start_time"    property="startTime"/>
+        <result column="end_time"      property="endTime"/>
+        <result column="status"        property="status"/>
+        <result column="create_time"   property="createTime"/>
+        <result column="update_time"   property="updateTime"/>
+        <result column="deleted"       property="deleted"/>
+    </resultMap>
+
+    <sql id="BaseColumns">
+        id, product_id, sku_id, seckill_price, stock, sold,
+        start_time, end_time, status, create_time, update_time, deleted
+    </sql>
+
+    <!--
+      条件占用秒杀名额：stock - sold >= num 表示剩余名额够，
+      不够时这一行不命中，返回 0 即可判定售罄。
+
+      注意 WHERE 里不能再写「sold = 当前值」，那等于把乐观锁塞进语句里，
+      并发失败率极高；这里靠行锁 + 条件判断就够了。
+    -->
+    <update id="occupy">
+        update mkt_seckill
+           set sold = sold + #{num}
+         where id = #{seckillId}
+           and stock - sold &gt;= #{num}
+           and deleted = 0
+    </update>
+
+</mapper>
