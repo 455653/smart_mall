@@ -24,6 +24,12 @@ public class UserAccount extends BaseEntity {
 
     private String phone;
 
+    /** 昵称，注册时不填则默认"用户+手机尾号" */
+    private String nickname;
+
+    /** 头像地址，可空 */
+    private String avatar;
+
     private Role role = Role.CUSTOMER;            // 枚举默认按 name 存为 "CUSTOMER"
 
     private AccountStatus status = AccountStatus.ENABLED;

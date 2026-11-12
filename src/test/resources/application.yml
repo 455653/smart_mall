@@ -1,0 +1,45 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: smart-mall
+
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+  # 测试环境：直连真实 MySQL（192.168.83.129:3307），表结构已对齐
+  datasource:
+    url: jdbc:mysql://192.168.83.129:3307/smart_mall?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY:sk-local-placeholder}
+      base-url: ${OPENAI_BASE_URL:https://api.openai.com}
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL:gpt-4o-mini}
+          temperature: 0.3
+
+# MyBatis-Plus：实体字段与表字段的下划线映射
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:smart-mall-jwt-secret-key-must-be-at-least-32-bytes-long-2025}
+    access-ttl-seconds: 7200
+    refresh-ttl-seconds: 604800
+  order:
+    pay-timeout-minutes: 30
+    free-freight-threshold: 99.00
+    freight: 10.00
+  ai:
+    chat-provider: mock
+    embedding-provider: local

@@ -1,15 +1,79 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 用户账号持久层。 -->
+<!--
+  用户账号持久层。
+  namespace 必须与接口全限定名完全一致，否则启动时报
+  "Invalid bound statement (not found)"。
+-->
 <mapper namespace="com.smartmall.user.mapper.UserAccountMapper">
 
     <!--
-      该 Mapper 目前所有查询/写入都走 BaseMapper 内置方法（selectById / selectPage /
-      insert / updateById ...），没有自定义 SQL，所以这里只有 namespace。
-
-      之后要加自定义 SQL 就写在本文件里，接口中不再使用 @Select / @Update 注解：
-      注解里的 SQL 无法复用 <sql> 片段、无法做 <if> 动态拼接，也躲不过编译期检查。
+      实体字段与表列的映射。role / status 是枚举，MyBatis 默认 EnumTypeHandler 按 name()
+      取存，正好对上库里存的 'CUSTOMER'、'ENABLED'，所以不用额外写 typeHandler。
+      create_time / update_time / deleted 来自 BaseEntity，同样要在这里声明。
     -->
+    <resultMap id="BaseResultMap" type="com.smartmall.user.domain.UserAccount">
+        <id     column="id"                 property="id"/>
+        <result column="username"           property="username"/>
+        <result column="password"           property="password"/>
+        <result column="phone"              property="phone"/>
+        <result column="nickname"           property="nickname"/>
+        <result column="avatar"             property="avatar"/>
+        <result column="role"               property="role"/>
+        <result column="status"             property="status"/>
+        <result column="points"             property="points"/>
+        <result column="level"              property="level"/>
+        <result column="total_consumption"  property="totalConsumption"/>
+        <result column="token_version"      property="tokenVersion"/>
+        <result column="last_login_time"    property="lastLoginTime"/>
+        <result column="last_login_ip"      property="lastLoginIp"/>
+        <result column="create_time"        property="createTime"/>
+        <result column="update_time"        property="updateTime"/>
+        <result column="deleted"            property="deleted"/>
+    </resultMap>
+
+    <!-- 全部列，供自定义 select 复用，避免 select * -->
+    <sql id="BaseColumns">
+        id, username, password, phone, nickname, avatar, role, status, points, level,
+        total_consumption, token_version, last_login_time, last_login_ip,
+        create_time, update_time, deleted
+    </sql>
+
+    <!--
+      登录查询：账号既可能是登录名也可能是手机号，一条 SQL 两种命中。
+      deleted = 0 必须显式写：自定义 SQL 绕过了 MyBatis-Plus 的逻辑删除拦截，
+      MP 不会帮你追加这个条件，漏了就等于已注销账号还能登录。
+    -->
+    <select id="selectByAccount" resultMap="BaseResultMap">
+        select
+        <include refid="BaseColumns"/>
+        from user_account
+        where (username = #{account} or phone = #{account})
+          and deleted = 0
+        limit 1
+    </select>
+
+    <!--
+      更新登录信息。update_time 同样要手写（MP 的自动填充只作用于它自己的 update 方法）。
+      用 now() 而不是传 Java 时间：以数据库时钟为准，多实例部署时不依赖各机器的时间同步。
+    -->
+    <update id="updateLastLogin">
+        update user_account
+           set last_login_time = now(),
+               last_login_ip   = #{ip},
+               update_time     = now()
+         where id = #{id}
+           and deleted = 0
+    </update>
+
+    <!-- 条件自增令牌版本，登出与改密共用 -->
+    <update id="bumpTokenVersion">
+        update user_account
+           set token_version = token_version + 1,
+               update_time   = now()
+         where id = #{id}
+           and deleted = 0
+    </update>
 
 </mapper>

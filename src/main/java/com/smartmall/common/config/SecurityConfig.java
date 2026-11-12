@@ -3,6 +3,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 /**
  * 密码编码器。
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Bean;
  *   <li>计算慢（cost=10 约 60ms），暴力破解成本高；这个"慢"正是它的安全来源</li>
  * </ul>  加密用的 密碼加盐
  */
+@Configuration
 public class SecurityConfig {
 
 

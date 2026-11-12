@@ -1,15 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<!-- 收货地址持久层。 -->
+<!--
+  收货地址持久层。
+  namespace 必须与接口全限定名完全一致，否则启动时报
+  "Invalid bound statement (not found)"。
+-->
 <mapper namespace="com.smartmall.user.mapper.UserAddressMapper">
 
     <!--
-      该 Mapper 目前所有查询/写入都走 BaseMapper 内置方法（selectById / selectPage /
-      insert / updateById ...），没有自定义 SQL，所以这里只有 namespace。
-
-      之后要加自定义 SQL 就写在本文件里，接口中不再使用 @Select / @Update 注解：
-      注解里的 SQL 无法复用 <sql> 片段、无法做 <if> 动态拼接，也躲不过编译期检查。
+      is_default 在实体里是 Integer（不是 boolean），列是 bit(1)，两边都能自动转换。
+      delete / create_time 等来自 BaseEntity，同样要在这里声明。
     -->
+    <resultMap id="BaseResultMap" type="com.smartmall.user.domain.UserAddress">
+        <id     column="id"          property="id"/>
+        <result column="user_id"     property="userId"/>
+        <result column="receiver"    property="receiver"/>
+        <result column="phone"       property="phone"/>
+        <result column="province"    property="province"/>
+        <result column="city"        property="city"/>
+        <result column="district"    property="district"/>
+        <result column="detail"      property="detail"/>
+        <result column="is_default"  property="isDefault"/>
+        <result column="tag"         property="tag"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="deleted"     property="deleted"/>
+    </resultMap>
+
+    <!-- 全部列，供自定义 select 复用，避免 select * -->
+    <sql id="BaseColumns">
+        id, user_id, receiver, phone, province, city, district, detail, is_default, tag,
+        create_time, update_time, deleted
+    </sql>
+
+    <!--
+      清默认位：把该用户所有地址的 is_default 归零。
+      「先清后置」而不是「直接改新的那条」——默认地址是"唯一"语义，
+      只有把老的清掉才能保持全表只有一条 1，否则会出现两个默认地址。
+    -->
+    <update id="clearDefault">
+        update user_address
+           set is_default  = 0,
+               update_time = now()
+         where user_id = #{userId}
+           and is_default = 1
+           and deleted = 0
+    </update>
+
+    <!-- 置默认位：条件是 user_id + id，越权传别人的地址 ID 也只会影响 0 行 -->
+    <update id="markDefault">
+        update user_address
+           set is_default  = 1,
+               update_time = now()
+         where id = #{id}
+           and user_id = #{userId}
+           and deleted = 0
+    </update>
 
 </mapper>
