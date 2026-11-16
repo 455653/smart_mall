@@ -54,6 +54,7 @@ app:
     secret: ${JWT_SECRET:smart-mall-jwt-secret-key-must-be-at-least-32-bytes-long-2025}
     access-ttl-seconds: 7200        # 访问令牌 2 小时
     refresh-ttl-seconds: 604800     # 刷新令牌 7 天
+    issuer: ${JWT_ISSUER:smart-mall}   # 签发者，解析时校验，防别的系统用同密钥签的令牌混进来
   order:
     pay-timeout-minutes: 30         # 超时关单时间
     free-freight-threshold: 99.00   # 满 99 包邮

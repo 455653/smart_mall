@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 public record MallProperties(Jwt jwt, Order order, Ai ai) {
 
     /** 令牌相关 */
-    public record Jwt(String secret, long accessTtlSeconds, long refreshTtlSeconds) {
+    public record Jwt(String secret, long accessTtlSeconds, long refreshTtlSeconds, String issuer) {
     }
 
     /** 交易相关 */

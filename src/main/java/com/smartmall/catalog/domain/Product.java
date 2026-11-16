@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 @Setter
@@ -52,5 +54,13 @@ public class Product extends BaseEntity {
 
     public boolean onSale() {
         return status == ProductStatus.ON_SALE && !isRemoved();
+    }
+
+    /** 图集拆成列表，空白或 null 兜底成空列表 */
+    public List<String> imageList() {
+        if (images == null || images.isBlank()) {
+            return List.of();
+        }
+        return Arrays.stream(images.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
     }
 }
