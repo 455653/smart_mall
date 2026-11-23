@@ -74,6 +74,7 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void delete(Long userId, Long addressId) {
         requireOwned(userId, addressId);
         // MP 逻辑删除：改 deleted=1，历史订单的快照不受影响

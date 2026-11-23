@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.TableInfo;
 import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.smartmall.audit.mapper.AuditLogMapper;
+import com.smartmall.ai.mapper.*;
 import com.smartmall.catalog.mapper.*;
 import com.smartmall.marketing.mapper.*;
 import com.smartmall.order.mapper.*;
@@ -53,7 +54,9 @@ class DatabaseMappingVerificationTest {
             AfterSaleMapper.class, CartItemMapper.class, FavoriteMapper.class,
             OrderMapper.class, OrderItemMapper.class, OrderLogMapper.class,
             ReviewMapper.class, PaymentMapper.class,
-            UserAccountMapper.class, UserAddressMapper.class);
+            UserAccountMapper.class, UserAddressMapper.class,
+            ChatFeedbackMapper.class, ChatMessageMapper.class, ChatSessionMapper.class,
+            KnowledgeDocMapper.class, KnowledgeChunkMapper.class);
 
     @Autowired
     private DataSource dataSource;

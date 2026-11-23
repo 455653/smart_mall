@@ -57,6 +57,9 @@ public class Order extends BaseEntity {
     @TableField("receiver_snapshot")
     private String receiverSnapshot;
 
+    /** 订单备注，用户下单时填写的留言，可为空 */
+    private String remark;
+
     /** 幂等键：同一请求号只会成功一次 */
     @TableField("request_no")
     private String requestNo;
@@ -82,5 +85,10 @@ public class Order extends BaseEntity {
 
     public boolean payable() {
         return status == OrderStatus.WAIT_PAY && LocalDateTime.now().isBefore(expireTime);
+    }
+
+    /** 是否已过支付截止时间，支付服务据此拒绝"过期单再发起支付" */
+    public boolean expired() {
+        return expireTime != null && LocalDateTime.now().isAfter(expireTime);
     }
 }

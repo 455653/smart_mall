@@ -22,7 +22,7 @@ public class MembershipPolicyImpl implements MembershipPolicy {
 
             LEVELS.put(new BigDecimal("20000"),4);
 
-            LEVELS.put(new BigDecimal("100000"),5);
+            LEVELS.put(new BigDecimal("50000"),5);
 
         }
 
@@ -30,7 +30,7 @@ public class MembershipPolicyImpl implements MembershipPolicy {
 
 
     @Override
-    public int leveOf(BigDecimal totalConsumption) {
+    public int levelOf(BigDecimal totalConsumption) {
 
             // 不充钱  0
         BigDecimal total =  totalConsumption == null ? BigDecimal.ZERO : totalConsumption;
@@ -47,7 +47,7 @@ public class MembershipPolicyImpl implements MembershipPolicy {
     }
 
     @Override
-    public int pointOf(BigDecimal payAmount) {
+    public int pointsOf(BigDecimal payAmount) {
 
         //   空置 0分  小数  99.99   给它 99分
         return payAmount == null ? 0 : payAmount.intValue();

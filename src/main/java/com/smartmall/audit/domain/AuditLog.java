@@ -51,6 +51,9 @@ public class AuditLog extends BaseEntity {
     /** 请求耗时（毫秒），用于慢接口排查。 */
     private Long costMs;
 
+    /** HTTP 响应状态码，失败时与 errorMsg 一起定位问题。 */
+    private Integer statusCode;
+
     /** 是否为成功记录。 */
     public boolean succeeded() {
         return success;

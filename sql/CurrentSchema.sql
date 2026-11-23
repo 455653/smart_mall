@@ -99,7 +99,7 @@ create table mkt_coupon_template
     id               bigint auto_increment
         primary key,
     name             varchar(64)                     not null,
-    type             varchar(20)                     not null comment 'FULL_CUT/DISCOUNT',
+    type             varchar(20)                     not null comment 'FULL_REDUCTION/DISCOUNT',
     threshold_amount decimal(10, 2) default 0.00     not null comment '使用门槛金额，0 为无门槛',
     discount_amount  decimal(10, 2)                  null,
     discount_rate    decimal(4, 2)                   null,
@@ -135,7 +135,7 @@ create table mkt_seckill
 (
     id            bigint auto_increment
         primary key,
-    name          varchar(64)                   null comment '活动名称（实体未映射，改可空以免插入失败）',
+    name          varchar(64)                   not null comment '活动名称',
     product_id    bigint                        not null,
     sku_id        bigint                        not null,
     seckill_price decimal(10, 2)                not null,
@@ -305,7 +305,7 @@ create table pay_payment
     id            bigint auto_increment
         primary key,
     payment_no    varchar(32)                   not null comment '支付单号',
-    order_id      bigint                        null comment '订单 ID（实体未映射，改可空以免插入失败）',
+    order_id      bigint                        not null comment '订单 ID',
     order_no      varchar(32)                   not null,
     user_id       bigint                        not null,
     amount        decimal(12, 2)                not null,

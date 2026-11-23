@@ -42,6 +42,9 @@ public class UserAddress extends BaseEntity {
      */
     private Integer isDefault = 0;
 
+    /** 地址标签，如「家」「公司」，前端列表展示用，可为空 */
+    private String tag;
+
     /** 是否默认地址，业务代码读这里，避免各处写魔法值 1 */
     public boolean isDefaultAddress() {
         return Integer.valueOf(1).equals(isDefault);

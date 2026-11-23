@@ -31,4 +31,9 @@ public class Sku extends BaseEntity {
     public boolean hasStock() {
         return enabled && !isRemoved() && stock > 0;
     }
+
+    /** 库存是否够指定数量：加购时先做一次快速校验，真正的闸门在扣减 SQL */
+    public boolean hasStock(int num) {
+        return enabled && !isRemoved() && num > 0 && stock >= num;
+    }
 }

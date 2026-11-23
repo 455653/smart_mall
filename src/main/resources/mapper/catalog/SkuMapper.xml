@@ -40,4 +40,17 @@
            and enabled = 1
     </update>
 
+    <!--
+      回补库存：取消订单、退款时把货「放回去」。
+      没有 stock >= num 之类的条件，因为回补永远应该成功；但仍然写成
+      stock = stock + #{num}，让数据库做累加 —— 「先查出来加完再 updateById」
+      在并发回补时会互相覆盖。
+    -->
+    <update id="restoreStock">
+        update pms_sku
+           set stock = stock + #{num}
+         where id = #{skuId}
+           and deleted = 0
+    </update>
+
 </mapper>

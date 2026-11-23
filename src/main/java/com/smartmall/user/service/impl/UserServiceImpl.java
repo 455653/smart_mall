@@ -10,6 +10,7 @@ import com.smartmall.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 // log日志  3种引入方式  公司的方式
 @Slf4j
 @Service
@@ -43,22 +44,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)   // 先查后改必须原子，避免并发下改到过期数据
     public UserVO updateProfile(Long userId, ProfileUpdateRequest request) {
 
-        // 先确认用户存在，不存在直接 11001
-        getUser(userId);
+        // 先查完整实体：既是存在性校验（不存在抛 11001），也拿到当前值做"未传则保留"。
+        // 不能 new UserAccount() 打补丁后 updateById——实体里 role/status/points/level/
+        // totalConsumption/tokenVersion 都带初始值，非 null 会一并进 SET，
+        // 改个昵称就会把角色降级、积分清零、令牌版本重置。
+        UserAccount user = getUser(userId);
 
-        // 只挑"确实传了值"的字段更新：MP 默认忽略 null 字段，
-        // 空串（前端清空昵称/头像）也按"不改"处理，避免把昵称写成空。
-        UserAccount patch = new UserAccount();
-        patch.setId(userId);
+        // 昵称：非 null 且非空白才更新，空串视为"不修改"，避免把昵称清空
         if (request.nickname() != null && !request.nickname().isBlank()) {
-            patch.setNickname(request.nickname().trim());
+            user.setNickname(request.nickname().trim());
         }
-        if (request.avatar() != null && !request.avatar().isBlank()) {
-            patch.setAvatar(request.avatar().trim());
+
+        // 头像：只判 null（允许传空串表示清空头像），非 null 才覆盖
+        if (request.avatar() != null) {
+            user.setAvatar(request.avatar().trim());
         }
-        userAccountMapper.updateById(patch);
+
+        userAccountMapper.updateById(user);
 
         log.info("用户资料已更新 userId={}", userId);
 

@@ -82,7 +82,7 @@ ORDER BY col_status, tbl_name;
 -- -----------------------------------------------------------------------------
 -- 查询 3：三处「语义/可空性」改动单独确认
 --   - mkt_coupon_template / mkt_full_reduction / mkt_seckill 的 status 应为 VARCHAR(20) 且带默认值
---   - mkt_seckill.name、pay_payment.order_id 应为可空（否则实体 INSERT 会失败）
+--   - mkt_seckill.name、pay_payment.order_id 应为 NOT NULL（实体已映射且创建时写入）
 -- -----------------------------------------------------------------------------
 SELECT TABLE_NAME   AS `表`,
        COLUMN_NAME  AS `列`,
@@ -94,9 +94,9 @@ SELECT TABLE_NAME   AS `表`,
                 AND COLUMN_NAME = 'status'
                 AND COLUMN_TYPE = 'varchar(20)'                       THEN 'PASS'
            WHEN TABLE_NAME = 'mkt_seckill'    AND COLUMN_NAME = 'name'
-                AND IS_NULLABLE = 'YES'                               THEN 'PASS'
+                AND IS_NULLABLE = 'NO'                                THEN 'PASS'
            WHEN TABLE_NAME = 'pay_payment'    AND COLUMN_NAME = 'order_id'
-                AND IS_NULLABLE = 'YES'                               THEN 'PASS'
+                AND IS_NULLABLE = 'NO'                                THEN 'PASS'
            ELSE 'FAIL'
        END AS `结果`
 FROM information_schema.COLUMNS

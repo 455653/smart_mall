@@ -29,6 +29,9 @@ public class Category extends BaseEntity {
     /** 层级 1/2/3，冗余存储省掉逐层向上递归，面包屑也靠它 */
     private int level = 1;
 
+    /** 是否启用，停用的分类不在前台导航展示 */
+    private boolean enabled = true;
+
     /** 是否一级分类，前台楼层导航只取这一类 */
     public boolean isRoot() {
         return parentId == null || parentId == 0L;

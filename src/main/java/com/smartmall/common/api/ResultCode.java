@@ -40,6 +40,7 @@ public enum ResultCode {
     PRODUCT_OFF_SHELF(12002, "商品已下架"),
     STOCK_NOT_ENOUGH(12003, "库存不足"),
     SKU_NOT_FOUND(12004, "商品规格不存在"),
+    CATEGORY_NOT_FOUND(12005, "分类不存在"),
 
     // ---------- 交易域 13xxx ----------
     CART_EMPTY(13001, "购物车为空"),
@@ -47,6 +48,7 @@ public enum ResultCode {
     ORDER_STATUS_ILLEGAL(13003, "当前订单状态不允许该操作"),
     ORDER_PAY_TIMEOUT(13004, "订单支付超时，已自动关闭"),
     ORDER_AMOUNT_MISMATCH(13005, "订单金额校验不一致"),
+    CART_ITEM_NOT_FOUND(13006, "购物车条目不存在"),
 
     // ---------- 营销域 14xxx ----------
     COUPON_NOT_FOUND(14001, "优惠券不存在"),

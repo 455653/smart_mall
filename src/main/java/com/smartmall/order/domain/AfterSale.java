@@ -60,6 +60,9 @@ public class AfterSale  extends BaseEntity {
     /** 处理备注，驳回时必须写清理由 */
     private String handleRemark;
 
+    /** 审核人，记录是哪位客服通过/驳回的，用于追责 */
+    private String auditBy;
+
     /** 归属校验：防止 A 用户改 id 查看/撤销 B 用户的售后单 */
     public boolean ownedBy(Long userId) {
         return this.userId != null && this.userId.equals(userId);

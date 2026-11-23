@@ -6,10 +6,10 @@ import java.math.BigDecimal;
 public interface MembershipPolicy {
 
     //  按消费 计算等级会员
-    int  leveOf(BigDecimal totalConsumption);
+    int  levelOf(BigDecimal totalConsumption);
 
     // 算积分  截断取整数 不足1元不给
-    int  pointOf(BigDecimal payAmount);
+    int  pointsOf(BigDecimal payAmount);
 
 
 }

@@ -23,6 +23,9 @@ import java.time.LocalDateTime;
 public class Seckill extends BaseEntity {
 
 
+    /** 活动名称，运营给这次秒杀起的可读名字，前台活动页展示。 */
+    private String name;
+
     /** 商品 SPU ID，便于列表页一次性带出商品信息。 */
     private Long productId;
 

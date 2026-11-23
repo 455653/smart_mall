@@ -43,6 +43,9 @@ public class Review extends BaseEntity {
     /** 商家回复，一条评价只允许回复一次 */
     private String reply;
 
+    /** 下单时快照下来的用户昵称，匿名评价或用户改名后仍能按原昵称展示 */
+    private String nickname;
+
     /** 归属校验：防止 A 用户删改 B 用户的评价 */
     public boolean ownedBy(Long userId) {
         return this.userId != null && this.userId.equals(userId);

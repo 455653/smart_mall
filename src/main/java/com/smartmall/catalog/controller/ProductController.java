@@ -2,11 +2,13 @@ package com.smartmall.catalog.controller;
 
 import com.smartmall.catalog.dto.ProductQuery;
 import com.smartmall.catalog.service.ProductService;
+import com.smartmall.catalog.vo.ProductDetailVO;
 import com.smartmall.catalog.vo.ProductVO;
 import com.smartmall.common.api.PageResult;
 import com.smartmall.common.api.Result;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -44,5 +46,11 @@ public class ProductController {
         var query = new ProductQuery(keyword, categoryId, brandId, minPrice, maxPrice,
                 sort, pageNum, pageSize);
         return Result.ok(productService.page(query));
+    }
+
+    /** 商品详情：SPU + SKU + 品牌 + 面包屑，热点数据走缓存。 */
+    @GetMapping("/{id}")
+    public Result<ProductDetailVO> detail(@PathVariable Long id) {
+        return Result.ok(productService.detail(id));
     }
 }

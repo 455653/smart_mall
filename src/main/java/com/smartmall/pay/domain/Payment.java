@@ -31,6 +31,9 @@ public class Payment extends BaseEntity {
     /** 关联订单号，唯一索引；支付回调靠它反查订单 */
     private String orderNo;
 
+    /** 关联订单主键 ID，便于按 ID 直连，避免只能靠单号字符串关联 */
+    private Long orderId;
+
     /** 付款用户，回调时校验与订单归属一致，防串单 */
     private Long userId;
 

@@ -61,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
         userAccount.setPassword(passwordEncoder.encode(request.password()));
         userAccount.setRole(Role.CUSTOMER);
         userAccount.setStatus(AccountStatus.ENABLED);
-        userAccount.setLevel(membershipPolicy.leveOf(BigDecimal.ZERO));
+        userAccount.setLevel(membershipPolicy.levelOf(BigDecimal.ZERO));
         userAccount.setPoints(0);
         userAccount.setTotalConsumption(BigDecimal.ZERO);
         userAccount.setTokenVersion(0);
@@ -77,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LoginResponse login(LoginRequest request, String ip) {
         String account = request.account().trim();
 
@@ -103,6 +104,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public LoginResponse refresh(RefreshTokenRequest request) {
         // 解析刷新令牌：签名、过期、typ=refresh 三重校验都在这里做掉
         LoginUser loginUser = jwtUtil.parseRefreshToken(request.refreshToken());

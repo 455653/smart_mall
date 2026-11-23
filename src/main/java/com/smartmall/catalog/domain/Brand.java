@@ -24,6 +24,9 @@ public class Brand extends BaseEntity {
     /** 排序权重，值越小越靠前 */
     private int sort;
 
+    /** 是否启用，停用的品牌不参与前台筛选与选择 */
+    private boolean enabled = true;
+
     /** 是否有 Logo，前端据此决定是否占位图 */
     public boolean hasLogo() {
         return logo != null && !logo.isBlank();

@@ -34,13 +34,23 @@ public final class UserContext {
         return user == null ? null : user.userId();
     }
 
-    /** 必须已登录，否则抛 40100 */
-    public static Long requireUserId() {
+    /** 是否已登录，供鉴权拦截器判断 */
+    public static boolean isAuthenticated() {
+        return HOLDER.get() != null;
+    }
+
+    /** 取当前用户，未登录直接抛 40100（由全局异常处理器转成 Result） */
+    public static LoginUser require() {
         LoginUser user = HOLDER.get();
         if (user == null) {
             throw new BizException(ResultCode.UNAUTHORIZED);
         }
-        return user.userId();
+        return user;
+    }
+
+    /** 必须已登录，否则抛 40100 */
+    public static Long requireUserId() {
+        return require().userId();
     }
 
     /** 必须是管理员，否则抛 40300 */
